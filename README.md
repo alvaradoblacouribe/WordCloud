@@ -1,5 +1,5 @@
 # WordCloud
-Creating a Word Cloud based on the polarity and subjectivity of tweets
+Creating a graph and Word Clouds by using TextBlobs in Python based on the polarity of tweets
 
 # Polarity Of Tweets Graph
 ![Polarity of Tweets Graph](/PolarityOfTweetsGraph.png)
