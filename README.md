@@ -6,3 +6,6 @@ Creating a Word Cloud based on the polarity and subjectivity of tweets
 
 # Positivity of Tweets Word Cloud
 ![Positivity of Tweets Word Cloud](/PositiveTextBlob.png)
+
+# Neutrality of Tweets Word Cloud
+![Neutral Text Blob](/NeutralTextBlob.png)
