@@ -11,9 +11,10 @@ from textblob import TextBlob
 import json
 import matplotlib.pyplot as plt
 #Get the JSON data
-tweetFile = open("/Users/girlswhocode/Desktop/gwc/GWCTestingSummer18/TwitterData/tweets_small.json", "r")
+tweetFile = open("/Users/icalvaradoblanco/Desktop/gwc/otherWork/TwitterData/WordCloud/TwitterWordCloud/tweets_small.json", "r")
 tweetData = json.load(tweetFile)
 tweetFile.close()
+
 
 #Step 1: Graph the polarity
 
@@ -25,7 +26,7 @@ def TweetsStrings():
         Tweet= (tweetData[tweet]["text"])
         TweetStringList.append(Tweet)
     return TweetStringList
-TweetStringList= TweetsStrings()
+
 
 #Calculating Polarity of TweetString
 
@@ -36,41 +37,21 @@ def PolarityofTweets(TweetStringList):
         Polarity= testimonial.sentiment.polarity
         TweetPolarity.append(Polarity) #X values
     return(TweetPolarity)
-TweetPolarity= PolarityofTweets(TweetStringList)
-
-#Graphing the data in a Histogram
-
-plt.hist(TweetPolarity,100, facecolor='green')
-plt.xlabel("Polarity")
-plt.ylabel("Number of Tweets")
-plt.title("Polarity of Tweets")
-plt.axis([-1.0,1.0,0,50])
-plt.show()
 
 #Step 2: Visualize the tweetData
 
-#Converting TweetString into a TweetString
-
-TweetStringString= " ".join(TweetStringList)
-
-TweetStringStringB= TextBlob(TweetStringString)
-
 #Getting the frequencies of words
 def TopWords(TweetStringStringB): #freq>10
+    print("----------------------")
     Popularity=[]
     for tweet in range(len(TweetStringStringB.words)):
         word= TweetStringStringB.words[tweet]
         numberpopularity=(TweetStringStringB.word_counts[word])
-        if (numberpopularity>5 & (len(word)>6 or len(word)<4)):
-            if word.isalpha():
-                Popularity.append(word)
+        if (numberpopularity>5):
+            if (word!='https'):
+                if word.isalpha():
+                    Popularity.append(word)
     return(Popularity) #You want redundancy to see the frequency in the wordcloud
-
-Popularity=" ".join(TopWords(TweetStringStringB))
-
-#Putting the data into a file
-f= open("PopularityStringGeneral.txt","w+")
-f.write(Popularity)
 
 
 #Making the Word Cloud
@@ -96,44 +77,71 @@ def PositiveWords(TweetStringStringB,TweetStringString):
             if ((polarityofword>0.3)) :
                 PositiveWords.append(word)
     return PositiveWords
-PositiveWords=PositiveWords(TweetStringStringB,TweetStringString)
-PositiveWords= " ".join(PositiveWords)
-f= open("PopularityPositiveWords.txt","w+")
-f.write(PositiveWords)
+
 
 def NeutralWords(TweetStringStringB,TweetStringString):
     NeutralWords=[]
     for tweet in range(len(TweetStringStringB.words)):
         word=TweetStringStringB.words[tweet]
-        if (word.isalpha()):
-            word=TextBlob(word)
-            polarityofword= word.sentiment.polarity
-            word=(TweetStringStringB.words[tweet])
-            if ((polarityofword<0.3) & (polarityofword>-0.3)):
-                NeutralWords.append(word)
+        if (word!='https'):
+            if (word.isalpha()):
+                word=TextBlob(word)
+                polarityofword= word.sentiment.polarity
+                word=(TweetStringStringB.words[tweet])
+                if ((polarityofword<0.3) & (polarityofword>-0.3)):
+                        NeutralWords.append(word)
     return NeutralWords
-NeutralWords= NeutralWords(TweetStringStringB,TweetStringString)
-NeutralWords= " ".join(NeutralWords)
-f= open("PopularityNeutralWords.txt","w+")
-f.write(NeutralWords)
 
 def NegativeWords(TweetStringStringB,TweetStringString):
     NegativeWords=[]
     for tweet in range(len(TweetStringStringB.words)):
         word=TweetStringStringB.words[tweet]
         if(word.isalpha()):
-            print(word)
             word=TextBlob(word)
             polarityofword= word.sentiment.polarity
             word=(TweetStringStringB.words[tweet])
             if ((polarityofword<-0.3)) :
+                print("NEGATIVE YEAH")
                 NegativeWords.append(word)
     return NegativeWords
+
+
+#Flow
+
+#gets the tweet text
+TweetStringList= TweetsStrings()
+#polarity of tweets
+TweetPolarity= PolarityofTweets(TweetStringList)
+#graphs the polarity in a Histogram
+plt.hist(TweetPolarity,100, facecolor='green')
+plt.xlabel("Polarity")
+plt.ylabel("Number of Tweets")
+plt.title("Polarity of Tweets")
+plt.axis([-1.0,1.0,0,50])
+plt.show()
+#Makes tweets into TextBlobs
+TweetStringString= " ".join(TweetStringList)
+TweetStringStringB= TextBlob(TweetStringString)
+#gets the most popular words and storing them
+Popularity=" ".join(TopWords(TweetStringStringB))
+f= open("PopularityStringGeneral.txt","w+")
+f.write(Popularity)
+#popularity of neutral words 
+NeutralWords= NeutralWords(TweetStringStringB,TweetStringString)
+NeutralWords= " ".join(NeutralWords)
+f= open("PopularityNeutralWords.txt","w+")
+f.write(NeutralWords)
+#popularity of negative words 
 NegativeWords=NegativeWords(TweetStringStringB,TweetStringString)
 NegativeWords= " ".join(NegativeWords)
 f= open('PopularityNegativeWords.txt',"w+")
 f.write(NegativeWords)
-
+#Popularity of the word clouds 
+print("POSITIVE")
 MakeWordCloud('PopularityPositiveWords.txt')
+print("NEUTRAL")
 MakeWordCloud('PopularityNeutralWords.txt')
-MakeWordCloud('PopularityNegativeWords.txt')
+
+#currently not working as expected 
+#MakeWordCloud('PopularityNegativeWords.txt')
+
